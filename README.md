@@ -73,6 +73,7 @@ Sama dengan `mufigu-nextjs`, tanpa CMS: satu aplikasi, domain `music.mufigu.com`
   terlihat di Coolify (Storages).
 - **Izin file:** container berjalan sebagai user `node` (uid 1000), sama dengan user `deploy` di VPS yang memiliki folder musik.
   Coolify mereset izin folder mount menjadi 750 tiap deploy, jadi jangan mengandalkan izin `other`; upload file memakai user `deploy`.
+- **Auto-deploy:** webhook GitHub (event push) ke Coolify aktif; `git push` ke `main` membangun ulang situs sendiri (sekitar 2 menit).
 - **Healthcheck:** `/api/health`.
 - **Tidak ada variabel environment wajib.**
 - Situs tidak diindeks mesin pencari (`robots.txt` disallow, header `X-Robots-Tag`, meta `noindex`).
