@@ -71,6 +71,8 @@ Sama dengan `mufigu-nextjs`, tanpa CMS: satu aplikasi, domain `music.mufigu.com`
   `MUSIC_DIR=/data/music` sudah diset di `Dockerfile`.
 - **Mengunggah musik:** `scp -r "<folder playlist>" user@IP-VPS:<path-volume>/` atau lewat terminal Coolify. Path volume di host
   terlihat di Coolify (Storages).
+- **Izin file:** container berjalan sebagai user `node` (uid 1000), sama dengan user `deploy` di VPS yang memiliki folder musik.
+  Coolify mereset izin folder mount menjadi 750 tiap deploy, jadi jangan mengandalkan izin `other`; upload file memakai user `deploy`.
 - **Healthcheck:** `/api/health`.
 - **Tidak ada variabel environment wajib.**
 - Situs tidak diindeks mesin pencari (`robots.txt` disallow, header `X-Robots-Tag`, meta `noindex`).

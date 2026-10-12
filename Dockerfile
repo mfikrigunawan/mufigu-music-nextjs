@@ -21,12 +21,13 @@ ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 # Folder musik: pasang volume persisten Coolify ke /data/music (satu subfolder per playlist). Tidak ikut di image.
 ENV MUSIC_DIR=/data/music
-RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs \
-  && mkdir -p /data/music && chown nextjs:nodejs /data/music
+RUN mkdir -p /data/music && chown node:node /data/music
 COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-USER nextjs
+COPY --from=builder --chown=node:node /app/.next/standalone ./
+COPY --from=builder --chown=node:node /app/.next/static ./.next/static
+# User `node` (uid 1000) sama dengan pemilik folder musik di VPS (user `deploy`, uid 1000). Coolify mereset izin folder mount
+# setiap deploy (750), jadi membaca lewat "other" tidak bisa diandalkan; lewat pemilik yang sama selalu bisa.
+USER node
 EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
   CMD wget -qO- http://127.0.0.1:3000/api/health || exit 1
