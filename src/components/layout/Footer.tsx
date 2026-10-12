@@ -4,6 +4,7 @@ export function Footer() {
   return (
     <footer className="mt-[clamp(3rem,7vw,7rem)] border-t border-line py-8 text-[.85rem] text-muted">
       <div className="wrap flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
+        <p></p>
         <p>
           © {new Date().getFullYear()}{' '}
           <a
@@ -12,9 +13,8 @@ export function Footer() {
           >
             Mufigu
           </a>{' '}
-          · A personal music player and a case study.
+          · A personal music player.
         </p>
-        <p>Next.js · Tailwind CSS · GSAP · Lenis</p>
       </div>
     </footer>
   );
