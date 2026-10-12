@@ -154,9 +154,11 @@ function load(slug: string, order: number[], pos: number, autoplay: boolean) {
 
 function play() {
   audio?.play().catch((e: unknown) => {
-    // AbortError = pemutaran diganti lagu lain sebelum sempat mulai; bukan kegagalan
-    if ((e as DOMException).name !== 'AbortError')
-      set({ playing: false, error: true });
+    // AbortError = pemutaran diganti lagu lain sebelum sempat mulai. NotAllowedError = peramban menolak autoplay
+    // (belum ada gestur pengguna): lagu tetap siap, tinggal ditekan Play. Keduanya bukan kegagalan file.
+    const name = (e as DOMException).name;
+    if (name === 'NotAllowedError') set({ playing: false });
+    else if (name !== 'AbortError') set({ playing: false, error: true });
   });
 }
 
