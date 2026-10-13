@@ -38,8 +38,8 @@ MUSIC_DIR/
 1. Taruh file MP3 di folder playlist (folder baru = playlist baru) di PC.
 2. `pnpm playlists` (membuat `src/content/playlists.json`). Judul dan artis diambil dari nama file; koreksi di bagian
    `ARTIST_PREFIX`, `TITLE_OVERRIDE`, atau `ARTIST_OVERRIDE` di `scripts/build-playlists.mjs` bila ada yang salah.
-3. Unggah file MP3 baru ke folder musik di VPS (lihat Deployment). **MP3 tidak masuk Git.**
-4. `git add -A && git commit && git push`: Coolify membangun ulang dan situs ter-update.
+3. Unggah file MP3 baru ke folder musik di server. **MP3 tidak masuk Git.**
+4. `git add -A && git commit && git push`: situs dibangun ulang otomatis.
 
 Urutan 3 dan 4 sebaiknya MP3 dulu, baru push, supaya tidak ada lagu yang tampil tetapi belum bisa diputar.
 
@@ -58,22 +58,18 @@ src/
 │   ├── page.tsx                   # beranda: hero, statistik, daftar playlist
 │   ├── playlist/[slug]/page.tsx   # halaman playlist: daftar lagu
 │   ├── media/[playlist]/[file]/   # penyaji MP3 dengan HTTP Range (hanya file yang ada di playlists.json)
-│   └── api/health/                # healthcheck
+│   └── api/                       # endpoint API
 ├── components/{layout,player,sections,motion,ui}
 └── fonts/                         # Poppins (self-hosted)
 ```
 
-## Deployment (Coolify di VPS)
+## Deployment
 
-Sama dengan `mufigu-nextjs`, tanpa CMS: satu aplikasi, domain `music.mufigu.com`, port 3000, build pack Dockerfile.
+Aplikasi dibangun dari `Dockerfile` dan dijalankan di server pribadi. Tanpa CMS dan tanpa database.
 
-- **Volume musik:** pasang _persistent storage_ ke `/data/music` pada aplikasi (isi: subfolder playlist seperti di atas).
-  `MUSIC_DIR=/data/music` sudah diset di `Dockerfile`.
-- **Mengunggah musik:** `scp -r "<folder playlist>" user@IP-VPS:<path-volume>/` atau lewat terminal Coolify. Path volume di host
-  terlihat di Coolify (Storages).
-- **Izin file:** container berjalan sebagai user `node` (uid 1000), sama dengan user `deploy` di VPS yang memiliki folder musik.
-  Coolify mereset izin folder mount menjadi 750 tiap deploy, jadi jangan mengandalkan izin `other`; upload file memakai user `deploy`.
-- **Auto-deploy:** webhook GitHub (event push) ke Coolify aktif; `git push` ke `main` membangun ulang situs sendiri (sekitar 2 menit).
-- **Healthcheck:** `/api/health`.
+- **Musik:** folder musik di server dipasang ke container sebagai volume, lalu dibaca lewat `MUSIC_DIR`. File MP3 tidak ada di repo.
+- **Deploy:** push ke `main` memicu build ulang otomatis.
 - **Tidak ada variabel environment wajib.**
 - Situs tidak diindeks mesin pencari (`robots.txt` disallow, header `X-Robots-Tag`, meta `noindex`).
+
+Detail server (akses, path, izin, kredensial) sengaja tidak dicatat di repo ini.
