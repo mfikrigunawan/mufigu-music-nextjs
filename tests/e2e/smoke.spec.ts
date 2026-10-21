@@ -5,12 +5,7 @@ import { readFileSync } from 'node:fs';
 // Tanpa animasi: axe membaca keadaan akhir, bukan elemen yang sedang fade-in (kontras palsu).
 test.use({ reducedMotion: 'reduce' });
 
-const pages = [
-  '/',
-  '/playlist/depapepe',
-  '/playlist/one-piece',
-  '/playlist/reggae',
-];
+const pages = ['/', '/playlist/depapepe', '/playlist/one-piece'];
 
 for (const path of pages) {
   test(`${path} termuat, punya satu h1, lolos cek aksesibilitas dasar`, async ({
@@ -35,26 +30,26 @@ test('URL yang tidak dikenal menampilkan halaman 404', async ({ page }) => {
 
 test('route media: Range 206, file tak terdaftar 404', async ({ request }) => {
   const list = JSON.parse(readFileSync('src/content/playlists.json', 'utf8'));
-  const file = encodeURIComponent(list[2].tracks[0].file);
-  const res = await request.get(`/media/${list[2].slug}/${file}`, {
+  const file = encodeURIComponent(list[1].tracks[0].file);
+  const res = await request.get(`/media/${list[1].slug}/${file}`, {
     headers: { Range: 'bytes=0-9' },
   });
   expect(res.status()).toBe(206);
   expect(res.headers()['content-range']).toMatch(/^bytes 0-9\//);
   expect((await res.body()).length).toBe(10);
   expect(
-    (await request.get('/media/reggae/..%2F..%2Fsecret.txt')).status(),
+    (await request.get('/media/one-piece/..%2F..%2Fsecret.txt')).status(),
   ).toBe(404);
 });
 
 test('memutar lagu, lanjut lintas halaman, dan next track', async ({
   page,
 }) => {
-  await page.goto('/playlist/reggae');
+  await page.goto('/playlist/one-piece');
   const player = page.getByRole('region', { name: 'Music player' });
-  await page.getByRole('button', { name: /Ada Aku Disini/ }).click();
+  await page.getByRole('button', { name: /We Are!/ }).click();
   await expect(player.getByRole('button', { name: 'Pause' })).toBeVisible();
-  await expect(player.getByText('Ada Aku Disini')).toBeVisible();
+  await expect(player.getByText('We Are!')).toBeVisible();
 
   // pindah halaman lewat link internal: lagu tidak berhenti
   await page.getByRole('link', { name: 'Depapepe' }).click();
@@ -62,5 +57,5 @@ test('memutar lagu, lanjut lintas halaman, dan next track', async ({
   await expect(player.getByRole('button', { name: 'Pause' })).toBeVisible();
 
   await player.getByRole('button', { name: 'Next track' }).click();
-  await expect(player.getByText('And I Hope')).toBeVisible();
+  await expect(player.getByText('Believe')).toBeVisible();
 });

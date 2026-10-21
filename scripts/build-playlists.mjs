@@ -19,18 +19,12 @@ if (!root || !existsSync(root)) {
   process.exit(1);
 }
 
-// Nama file tanpa pemisah "---" (mis. folder Reggae): awalan -> nama artis.
-const ARTIST_PREFIX = {
-  'dhyohaw-': 'Dhyo Haw',
-  'souljah-': 'Souljah',
-  'steven-and-coconut-treez-': 'Steven & Coconut Treez',
-  'sunset-': 'Sunset',
-};
+// Nama file tanpa pemisah "---": awalan -> nama artis.
+const ARTIST_PREFIX = {};
 // Judul yang tanda hubungnya harus dipertahankan (kunci = nama file tanpa ekstensi).
 const TITLE_OVERRIDE = {
   'Depapepe---Hi-D!!': 'Hi-D!!',
   'Depapepe---Hi-d!!!': 'Hi-d!!!',
-  'souljah-im-free': "I'm Free",
   'Ending-7---GLORY--Kimi-ga-Iru-Kara----Takako-Uehara':
     'GLORY (Kimi ga Iru Kara)',
 };

@@ -31,8 +31,7 @@ Struktur `MUSIC_DIR`: satu subfolder per playlist, isinya file `.mp3`.
 ```
 MUSIC_DIR/
 ├── Depapepe/    *.mp3
-├── One Piece/   *.mp3
-└── Reggae/      *.mp3
+└── One Piece/   *.mp3
 ```
 
 1. Taruh file MP3 di folder playlist (folder baru = playlist baru) di PC.
