@@ -18,7 +18,7 @@ export function PlaylistActions({
   const playing = isCurrent && s.playing;
 
   return (
-    <div className="flex flex-wrap gap-3">
+    <div className="flex flex-wrap gap-3 max640:mt-2 max640:justify-center">
       <Button
         more
         type="button"
