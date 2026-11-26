@@ -64,31 +64,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Nama playlist berjalan mengikuti scroll (dekoratif) */}
-      <div
-        className="overflow-hidden border-y border-line py-5"
-        data-marquee-wrap
-        aria-hidden="true"
-      >
-        <div className="flex w-max gap-10 whitespace-nowrap" data-marquee>
-          {Array.from({ length: 4 }, () => playlists)
-            .flat()
-            .map((p, i) => (
-              <span
-                key={i}
-                className="text-[length:clamp(2.5rem,7vw,6rem)] leading-none font-extrabold text-transparent uppercase [-webkit-text-stroke:1.5px_#d9d9d9]"
-              >
-                {p.name}{' '}
-                <span className="text-[#6f8f82] [-webkit-text-stroke:0]">
-                  &#10022;
-                </span>
-              </span>
-            ))}
-        </div>
-      </div>
-
       <section
-        className="section"
+        className="section pt-0"
         id="playlists"
         aria-labelledby="playlists-title"
       >

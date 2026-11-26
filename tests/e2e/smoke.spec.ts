@@ -16,7 +16,6 @@ for (const path of pages) {
     await expect(page.locator('h1')).toHaveCount(1);
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa'])
-      .exclude('[data-marquee-wrap]') // teks outline dekoratif (aria-hidden), tanpa isi untuk dibaca
       .analyze();
     expect(results.violations).toEqual([]);
   });

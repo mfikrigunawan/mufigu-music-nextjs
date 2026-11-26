@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, marquee } from '@/lib/motion';
+import { motion } from '@/lib/motion';
 import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap';
 
 let introPlayed = false; // intro header hanya sekali per kunjungan
@@ -8,7 +8,7 @@ let introPlayed = false; // intro header hanya sekali per kunjungan
 /**
  * Seluruh animasi GSAP + ScrollTrigger halaman, dikendalikan lewat atribut data-*:
  * data-intro (hero), data-title (judul besar), data-reveal (kartu/blok), data-row (baris lagu),
- * data-marquee (teks berjalan mengikuti scroll), dan .section-title__ghost.
+ * dan .section-title__ghost.
  * Pasang <PageAnimations /> sekali di setiap halaman yang memakai atribut tersebut.
  */
 export function PageAnimations() {
@@ -95,11 +95,6 @@ export function PageAnimations() {
           },
         );
       });
-
-      // Teks berjalan mengikuti scroll
-      $$('[data-marquee]').forEach((row, i) =>
-        marquee(row, row.closest('[data-marquee-wrap]'), i % 2 === 0),
-      );
 
       // Kartu/blok muncul berkelompok
       if ($$('[data-reveal]').length)
