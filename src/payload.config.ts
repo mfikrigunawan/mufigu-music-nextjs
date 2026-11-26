@@ -29,6 +29,7 @@ export default buildConfig({
     avatar: 'default', // tanpa Gravatar (diblokir CSP)
     importMap: { baseDir: path.resolve(dirname) },
     components: {
+      providers: ['/components/cms/UploadProgress#default'], // persen upload
       // Logo Mufigu menggantikan logo Payload (login dan navigasi)
       graphics: {
         Logo: '/components/cms/Logo#default',
