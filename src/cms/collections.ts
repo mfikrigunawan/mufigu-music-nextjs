@@ -55,23 +55,16 @@ export const Tracks: CollectionConfig = {
             : parseBuffer(buffer, undefined, { duration: true })
         ) // Local API (seed)
           .catch(() => null);
-        const { container = '', codec = '', duration } = meta?.format ?? {};
-        const mp3 = /\.mp3$/i.test(name) && container === 'MPEG';
-        const mp4 =
-          /\.(mp4|m4a)$/i.test(name) &&
-          /isom|iso\d|mp4|M4A/i.test(container) &&
-          /AAC/.test(codec);
-        if (!(mp3 || mp4) || !duration)
+        if (
+          !/\.mp3$/i.test(name) ||
+          meta?.format.container !== 'MPEG' ||
+          !meta.format.duration
+        )
           throw new ValidationError({
-            errors: [
-              {
-                path: 'file',
-                message: 'File harus MP3, atau MP4/M4A dengan audio AAC.',
-              },
-            ],
+            errors: [{ path: 'file', message: 'File harus MP3 yang valid.' }],
           });
-        data.mimeType = mp3 ? 'audio/mpeg' : 'audio/mp4';
-        data.duration = Math.round(duration);
+        data.mimeType = 'audio/mpeg';
+        data.duration = Math.round(meta.format.duration);
         return data;
       },
     ],
