@@ -86,7 +86,7 @@ export default async function HomePage() {
             <span className={sectionGhost}>{home.sectionOutline}</span>
             <span className={sectionMain}>{home.sectionSolid}</span>
           </h2>
-          <div className="grid grid-cols-[repeat(3,minmax(0,1fr))] gap-[clamp(1rem,1.6vw,1.75rem)] max1024:grid-cols-[repeat(2,minmax(0,1fr))] max640:grid-cols-[1fr]">
+          <div className="grid grid-cols-[repeat(3,minmax(0,1fr))] gap-[clamp(1rem,1.6vw,1.75rem)] max1024:grid-cols-[repeat(2,minmax(0,1fr))] max640:grid-cols-[repeat(3,minmax(0,1fr))] max640:gap-2">
             {playlists.map((p) => (
               <PlaylistCard
                 key={p.slug}
