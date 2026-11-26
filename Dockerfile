@@ -19,13 +19,13 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
-# Folder musik: pasang sebagai volume ke /data/music (satu subfolder per playlist). Tidak ikut di image.
+# Folder musik: pasang sebagai volume ke /data/music (harus bisa ditulis; upload CMS di _uploads). Tidak ikut di image.
 ENV MUSIC_DIR=/data/music
 RUN mkdir -p /data/music && chown node:node /data/music
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=node:node /app/.next/standalone ./
 COPY --from=builder --chown=node:node /app/.next/static ./.next/static
-# Berjalan sebagai user non-root `node`; pemilik folder musik di host harus uid yang sama agar file bisa dibaca.
+# Berjalan sebagai user non-root `node`; pemilik folder musik di host harus uid yang sama agar upload bisa disimpan.
 USER node
 EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \

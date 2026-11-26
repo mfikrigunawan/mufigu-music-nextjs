@@ -8,7 +8,13 @@ import { formatTotal } from '@/lib/format';
 import { currentOf, playPlaylist, toggle, usePlayerState } from '@/lib/player';
 
 /** Kartu playlist di beranda: seluruh kartu membuka halaman playlist; tombol bulat memutarnya langsung. */
-export function PlaylistCard({ playlist }: { playlist: Playlist }) {
+export function PlaylistCard({
+  playlist,
+  tracksWord,
+}: {
+  playlist: Playlist;
+  tracksWord?: string | null;
+}) {
   const s = usePlayerState();
   const isCurrent = currentOf(s)?.playlist.slug === playlist.slug;
   const playing = isCurrent && s.playing;
@@ -20,7 +26,7 @@ export function PlaylistCard({ playlist }: { playlist: Playlist }) {
     >
       <div className="relative">
         <Cover
-          slug={playlist.slug}
+          color={playlist.color}
           name={playlist.name}
           className="rounded-[12px]"
         />
@@ -28,7 +34,7 @@ export function PlaylistCard({ playlist }: { playlist: Playlist }) {
           type="button"
           aria-label={`${playing ? 'Pause' : 'Play'} ${playlist.name}`}
           className="absolute right-3 bottom-3 z-2 grid h-12 w-12 place-items-center rounded-[50%] bg-white text-black shadow-[0_8px_24px_rgba(0,0,0,.25)] [transition:opacity_.25s,translate_.25s,scale_.15s] hover:scale-105 focus-visible:translate-y-0 focus-visible:opacity-100 active:scale-95 min-[1025px]:translate-y-2 min-[1025px]:opacity-0 min-[1025px]:group-hover:translate-y-0 min-[1025px]:group-hover:opacity-100 [&_svg]:h-5 [&_svg]:w-5"
-          onClick={() => (isCurrent ? toggle() : playPlaylist(playlist.slug))}
+          onClick={() => (isCurrent ? toggle() : playPlaylist(playlist))}
         >
           {playing ? <PauseIcon /> : <PlayIcon />}
         </button>
@@ -43,7 +49,7 @@ export function PlaylistCard({ playlist }: { playlist: Playlist }) {
           </Link>
         </h3>
         <p className="mt-1 text-[.9rem] text-muted">
-          {playlist.tracks.length} tracks ·{' '}
+          {playlist.tracks.length} {tracksWord} ·{' '}
           {formatTotal(playlistDuration(playlist))}
         </p>
       </div>

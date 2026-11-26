@@ -30,15 +30,13 @@ test('URL yang tidak dikenal menampilkan halaman 404', async ({ page }) => {
 test('route media: Range 206, file tak terdaftar 404', async ({ request }) => {
   const list = JSON.parse(readFileSync('src/content/playlists.json', 'utf8'));
   const file = encodeURIComponent(list[1].tracks[0].file);
-  const res = await request.get(`/media/${list[1].slug}/${file}`, {
+  const res = await request.get(`/media/${file}`, {
     headers: { Range: 'bytes=0-9' },
   });
   expect(res.status()).toBe(206);
   expect(res.headers()['content-range']).toMatch(/^bytes 0-9\//);
   expect((await res.body()).length).toBe(10);
-  expect(
-    (await request.get('/media/one-piece/..%2F..%2Fsecret.txt')).status(),
-  ).toBe(404);
+  expect((await request.get('/media/..%2F..%2Fsecret.txt')).status()).toBe(404);
 });
 
 test('memutar lagu, lanjut lintas halaman, dan next track', async ({
@@ -46,7 +44,7 @@ test('memutar lagu, lanjut lintas halaman, dan next track', async ({
 }) => {
   await page.goto('/playlist/one-piece');
   const player = page.getByRole('region', { name: 'Music player' });
-  await page.getByRole('button', { name: /We Are!/ }).click();
+  await page.getByRole('button', { name: /We Are! Hiroshi/ }).click();
   await expect(player.getByRole('button', { name: 'Pause' })).toBeVisible();
   await expect(player.getByText('We Are!')).toBeVisible();
 

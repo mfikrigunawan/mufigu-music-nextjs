@@ -6,38 +6,39 @@ import { Header } from '@/components/layout/Header';
 import { SmoothScrollProvider } from '@/components/layout/SmoothScrollProvider';
 import { PlayerBar } from '@/components/player/PlayerBar';
 import { siteConfig } from '@/config/site.config';
-import './globals.css';
+import { getLibrary, getSite } from '@/content/cms';
+import '../globals.css';
 
 // Font di-host sendiri (src/fonts), tanpa request ke Google Fonts.
 const poppins = localFont({
   src: [
     {
-      path: '../fonts/poppins-latin-300-normal.woff2',
+      path: '../../fonts/poppins-latin-300-normal.woff2',
       weight: '300',
       style: 'normal',
     },
     {
-      path: '../fonts/poppins-latin-400-normal.woff2',
+      path: '../../fonts/poppins-latin-400-normal.woff2',
       weight: '400',
       style: 'normal',
     },
     {
-      path: '../fonts/poppins-latin-500-normal.woff2',
+      path: '../../fonts/poppins-latin-500-normal.woff2',
       weight: '500',
       style: 'normal',
     },
     {
-      path: '../fonts/poppins-latin-600-normal.woff2',
+      path: '../../fonts/poppins-latin-600-normal.woff2',
       weight: '600',
       style: 'normal',
     },
     {
-      path: '../fonts/poppins-latin-700-normal.woff2',
+      path: '../../fonts/poppins-latin-700-normal.woff2',
       weight: '700',
       style: 'normal',
     },
     {
-      path: '../fonts/poppins-latin-800-normal.woff2',
+      path: '../../fonts/poppins-latin-800-normal.woff2',
       weight: '800',
       style: 'normal',
     },
@@ -46,14 +47,21 @@ const poppins = localFont({
   display: 'swap',
 });
 
+// Konten diambil dari CMS di setiap request, jadi perubahan di CMS langsung tampil.
+export const dynamic = 'force-dynamic';
+
 // Situs pribadi dan case study: tidak perlu SEO, justru jangan diindeks (lihat juga robots.ts).
-export const metadata: Metadata = {
-  metadataBase: new URL(siteConfig.url),
-  title: { default: siteConfig.name, template: `%s · ${siteConfig.name}` },
-  description: siteConfig.description,
-  robots: { index: false, follow: false },
-  icons: { icon: '/favicon.svg' },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const site = await getSite();
+  const name = site.name || siteConfig.name;
+  return {
+    metadataBase: new URL(siteConfig.url),
+    title: { default: name, template: `%s · ${name}` },
+    description: site.description,
+    robots: { index: false, follow: false },
+    icons: { icon: '/favicon.svg' },
+  };
+}
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -62,11 +70,12 @@ export const viewport: Viewport = {
   themeColor: siteConfig.brandColor.primary,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [site, playlists] = await Promise.all([getSite(), getLibrary()]);
   const brandVars = {
     '--brand-primary': siteConfig.brandColor.primary,
     '--brand-accent': siteConfig.brandColor.accent,
@@ -90,18 +99,34 @@ export default function RootLayout({
           className="fixed top-[-4rem] left-4 z-200 rounded-lg bg-brand-primary px-[1.1rem] py-[.7rem] text-white [transition:top_.2s] focus:top-4"
           href="#main"
         >
-          Skip to content
+          {site.skipLink}
         </a>
         <SmoothScrollProvider>
-          <Header />
+          <Header
+            name={site.name || siteConfig.name}
+            wordmark={site.headerWordmark}
+            linkLabel={site.headerLinkLabel}
+            linkUrl={site.headerLinkUrl}
+          />
           {/* padding bawah = tinggi player (fixed) supaya footer tidak tertutup */}
           <div className="pb-[calc(var(--player-h)+env(safe-area-inset-bottom))]">
             <main id="main" className="pt-(--header-h)">
               {children}
             </main>
-            <Footer />
+            <Footer
+              linkLabel={site.footerLinkLabel}
+              linkUrl={site.footerLinkUrl}
+              text={site.footerText}
+            />
           </div>
-          <PlayerBar />
+          <PlayerBar
+            playlists={playlists}
+            texts={{
+              empty: site.playerEmpty,
+              hint: site.playerHint,
+              error: site.playerError,
+            }}
+          />
         </SmoothScrollProvider>
       </body>
     </html>

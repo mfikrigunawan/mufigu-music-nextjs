@@ -3,15 +3,15 @@ import { cn } from '@/lib/utils';
 
 /** Sampul playlist: gradien warna + huruf pertama nama berbentuk outline (selaras dengan judul outline situs). */
 export function Cover({
-  slug,
+  color,
   name,
   className,
 }: {
-  slug: string;
+  color: number;
   name: string;
   className?: string;
 }) {
-  const [from, to] = coverColors(slug);
+  const [from, to] = coverColors(color);
   return (
     <div
       aria-hidden="true"

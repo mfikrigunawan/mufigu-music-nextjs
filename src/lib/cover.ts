@@ -1,5 +1,3 @@
-import { playlists } from '@/content/playlists';
-
 // Sampul playlist dibuat dari warna, bukan gambar: warna dipilih dari urutan playlist (tiga playlist pertama pasti berbeda).
 const palette = [
   ['#7a9a8d', '#3f5c50'], // sage (aksen brand)
@@ -9,10 +7,4 @@ const palette = [
   ['#c9917f', '#8a5444'], // clay
 ] as const;
 
-export function coverColors(slug: string) {
-  const i = Math.max(
-    0,
-    playlists.findIndex((p) => p.slug === slug),
-  );
-  return palette[i % palette.length];
-}
+export const coverColors = (index: number) => palette[index % palette.length];

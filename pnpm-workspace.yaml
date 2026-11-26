@@ -1,4 +1,13 @@
 allowBuilds:
   unrs-resolver: true
+  esbuild: true
+  sharp: false
   '@parcel/watcher': false
   '@swc/core': false
+  '@embedded-postgres/windows-x64': true
+  '@embedded-postgres/linux-x64': false
+# Security patches for transitive deps pulled in by Payload (remove once upstream bumps them)
+overrides:
+  dompurify: '>=3.4.17'
+  fast-uri: '>=3.1.9'
+  graphql-scalars: '>=2.0.1'

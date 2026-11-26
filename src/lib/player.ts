@@ -2,12 +2,7 @@
 // dan tidak ada state yang basi di dalam event handler. Komponen membaca lewat hook di bawah (useSyncExternalStore).
 // Hanya boleh dipanggil dari komponen client.
 import { useSyncExternalStore } from 'react';
-import {
-  getPlaylist,
-  trackUrl,
-  type Playlist,
-  type Track,
-} from '@/content/playlists';
+import { trackUrl, type Playlist, type Track } from '@/content/playlists';
 
 export type Repeat = 'off' | 'all' | 'one';
 
@@ -73,6 +68,13 @@ export const usePlayerTime = () =>
     () => time,
     () => zeroTime,
   );
+
+// Daftar playlist dari CMS, diisi PlayerBar (dan saat sebuah playlist diputar, supaya selalu yang terbaru).
+const library = new Map<string, Playlist>();
+const getPlaylist = (slug: string) => library.get(slug);
+export function setLibrary(playlists: Playlist[]) {
+  playlists.forEach((p) => library.set(p.slug, p));
+}
 
 export function currentOf(
   s: PlayerState,
@@ -145,7 +147,7 @@ function load(slug: string, order: number[], pos: number, autoplay: boolean) {
   const playlist = getPlaylist(slug);
   const track = playlist?.tracks[order[pos]];
   if (!audio || !playlist || !track) return;
-  audio.src = trackUrl(playlist, track);
+  audio.src = trackUrl(track);
   set({ slug, order, pos, error: false });
   setTime(0, track.duration);
   syncMediaSession();
@@ -164,20 +166,23 @@ function play() {
 
 // ---------- Aksi (dipanggil dari UI) ----------
 
-/** Putar `index` dari playlist `slug`. `shuffle` mengubah mode acak; kosong = pakai mode sekarang. */
-export function playPlaylist(slug: string, index = 0, shuffle = state.shuffle) {
-  const playlist = getPlaylist(slug);
-  if (!playlist) return;
+/** Putar `index` dari `playlist`. `shuffle` mengubah mode acak; kosong = pakai mode sekarang. */
+export function playPlaylist(
+  playlist: Playlist,
+  index = 0,
+  shuffle = state.shuffle,
+) {
+  setLibrary([playlist]);
   const { order, pos } = build(playlist.tracks.length, index, shuffle);
   if (shuffle !== state.shuffle) set({ shuffle });
-  load(slug, order, pos, true);
+  load(playlist.slug, order, pos, true);
 }
 
 /** Klik sebuah lagu: lagu yang sedang aktif hanya di-toggle, lagu lain mulai diputar. */
-export function playTrack(slug: string, index: number) {
+export function playTrack(playlist: Playlist, index: number) {
   const c = currentOf(state);
-  if (c && c.playlist.slug === slug && c.index === index) toggle();
-  else playPlaylist(slug, index);
+  if (c && c.playlist.slug === playlist.slug && c.index === index) toggle();
+  else playPlaylist(playlist, index);
 }
 
 export function toggle() {

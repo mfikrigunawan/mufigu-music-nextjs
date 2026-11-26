@@ -6,7 +6,13 @@ import type { Playlist } from '@/content/playlists';
 import { currentOf, playPlaylist, toggle, usePlayerState } from '@/lib/player';
 
 /** Tombol Play/Pause dan Shuffle di header playlist. */
-export function PlaylistActions({ playlist }: { playlist: Playlist }) {
+export function PlaylistActions({
+  playlist,
+  texts,
+}: {
+  playlist: Playlist;
+  texts: Record<'play' | 'pause' | 'shuffle', string | null | undefined>;
+}) {
   const s = usePlayerState();
   const isCurrent = currentOf(s)?.playlist.slug === playlist.slug;
   const playing = isCurrent && s.playing;
@@ -16,9 +22,9 @@ export function PlaylistActions({ playlist }: { playlist: Playlist }) {
       <Button
         more
         type="button"
-        onClick={() => (isCurrent ? toggle() : playPlaylist(playlist.slug))}
+        onClick={() => (isCurrent ? toggle() : playPlaylist(playlist))}
       >
-        {playing ? 'Pause' : 'Play'}
+        {playing ? texts.pause : texts.play}
         {playing ? <PauseIcon /> : <PlayIcon />}
       </Button>
       <Button
@@ -27,13 +33,13 @@ export function PlaylistActions({ playlist }: { playlist: Playlist }) {
         type="button"
         onClick={() =>
           playPlaylist(
-            playlist.slug,
+            playlist,
             Math.floor(Math.random() * playlist.tracks.length),
             true,
           )
         }
       >
-        Shuffle
+        {texts.shuffle}
         <ShuffleIcon />
       </Button>
     </div>

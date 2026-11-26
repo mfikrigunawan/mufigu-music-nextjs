@@ -1,13 +1,14 @@
 // Menyajikan MP3 dari MUSIC_DIR dengan dukungan HTTP Range (wajib agar seek dan Media Session berjalan).
-// Hanya file yang tercantum di playlists.json yang bisa diminta, jadi path traversal tidak mungkin.
+// Hanya file yang tercatat di CMS yang bisa diminta, jadi path traversal tidak mungkin.
 import { createReadStream } from 'node:fs';
 import { stat } from 'node:fs/promises';
 import path from 'node:path';
-import { getPlaylist } from '@/content/playlists';
+import { uploadDir } from '@/cms/collections';
+import { cms } from '@/content/cms';
 
 export const dynamic = 'force-dynamic';
 
-type Ctx = { params: Promise<{ playlist: string; file: string }> };
+type Ctx = { params: Promise<{ file: string }> };
 
 /**
  * Stream file -> Web stream. Dibuat manual (bukan Readable.toWeb) karena peramban sering membatalkan request di tengah jalan
@@ -70,14 +71,18 @@ function parseRange(header: string, size: number): [number, number] | null {
 }
 
 async function serve(req: Request, { params }: Ctx, head: boolean) {
-  const { playlist: slug, file } = await params;
-  const root = process.env.MUSIC_DIR;
-  const playlist = getPlaylist(slug);
-  const track = playlist?.tracks.find((t) => t.file === file);
-  if (!root || !playlist || !track)
-    return new Response('Not found', { status: 404 });
+  const { file } = await params;
+  const payload = await cms();
+  const { docs } = await payload.find({
+    collection: 'tracks',
+    where: { filename: { equals: file } },
+    limit: 1,
+    depth: 0,
+  });
+  const filename = docs[0]?.filename;
+  if (!filename) return new Response('Not found', { status: 404 });
 
-  const filePath = path.join(root, playlist.dir, track.file);
+  const filePath = path.join(uploadDir, filename);
   const info = await stat(filePath).catch(() => null);
   if (!info?.isFile()) return new Response('Not found', { status: 404 });
 

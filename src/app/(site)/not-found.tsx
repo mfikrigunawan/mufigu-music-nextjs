@@ -2,20 +2,24 @@ import type { Metadata } from 'next';
 import { BigTitle } from '@/components/sections/BigTitle';
 import { Button } from '@/components/ui/Button';
 import { heroCopy, heroSection, lede } from '@/components/ui/styles';
+import { getSite } from '@/content/cms';
 
 export const metadata: Metadata = { title: 'Not found' };
 
-export default function NotFound() {
+export default async function NotFound() {
+  const site = await getSite();
   return (
     <section className={heroSection}>
       <div className="wrap">
         <div className={heroCopy}>
-          <BigTitle level="h1" outline="Track" solid="not found" />
-          <p className={lede}>
-            That page doesn&apos;t exist, or the playlist was renamed.
-          </p>
-          <Button more href="/">
-            Back to playlists
+          <BigTitle
+            level="h1"
+            outline={site.notFoundOutline ?? ''}
+            solid={site.notFoundSolid ?? ''}
+          />
+          <p className={lede}>{site.notFoundText}</p>
+          <Button more href={site.notFoundUrl}>
+            {site.notFoundButton}
           </Button>
         </div>
       </div>

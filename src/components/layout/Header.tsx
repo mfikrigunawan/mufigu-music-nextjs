@@ -10,10 +10,16 @@ import {
   siteHeader,
   siteHeaderInner,
 } from '@/components/ui/styles';
-import { siteConfig } from '@/config/site.config';
 import { cn } from '@/lib/utils';
 
-export function Header() {
+type Props = {
+  name: string;
+  wordmark?: string | null;
+  linkLabel?: string | null;
+  linkUrl: string;
+};
+
+export function Header({ name, wordmark, linkLabel, linkUrl }: Props) {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -32,21 +38,17 @@ export function Header() {
       data-header
     >
       <div className={siteHeaderInner}>
-        <Link
-          className={logoLink}
-          href="/"
-          aria-label={`${siteConfig.name} home`}
-        >
+        <Link className={logoLink} href="/" aria-label={`${name} home`}>
           <Logo className={logoImg} />
           <span className="text-[.8rem] font-semibold tracking-[.22em] text-muted uppercase">
-            Music
+            {wordmark}
           </span>
         </Link>
         <a
           className="inline-flex items-center gap-1 rounded-[999px] px-3 py-2 text-[.9rem] font-medium text-[#4a4a4a] transition-colors duration-250 hover:text-brand-primary [&_svg]:h-4 [&_svg]:w-4"
-          href={siteConfig.parentUrl}
+          href={linkUrl}
         >
-          mufigu.com
+          {linkLabel}
           <ArrowUpRightIcon />
         </a>
       </div>

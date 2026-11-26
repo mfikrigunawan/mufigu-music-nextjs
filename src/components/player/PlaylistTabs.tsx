@@ -1,8 +1,14 @@
 import Link from 'next/link';
-import { playlists } from '@/content/playlists';
+import type { Playlist } from '@/content/playlists';
 
 /** Pilihan playlist (chip) di atas halaman playlist; di layar sempit bisa digeser menyamping. */
-export function PlaylistTabs({ current }: { current: string }) {
+export function PlaylistTabs({
+  playlists,
+  current,
+}: {
+  playlists: Playlist[];
+  current: string;
+}) {
   return (
     <nav
       aria-label="Playlists"

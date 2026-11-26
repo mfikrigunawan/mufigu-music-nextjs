@@ -25,7 +25,7 @@ export function TrackList({ playlist }: { playlist: Playlist }) {
               type="button"
               className="group grid w-full grid-cols-[2.5rem_minmax(0,1fr)_auto] items-center gap-3 rounded-[12px] px-2 py-3 text-left transition-colors duration-200 hover:bg-[#f5f5f5] aria-[current=true]:bg-[#eef3f0] max640:gap-2"
               aria-current={isActive}
-              onClick={() => playTrack(playlist.slug, i)}
+              onClick={() => playTrack(playlist, i)}
             >
               <span className="flex justify-center text-sm text-muted tabular-nums [&_svg]:h-4 [&_svg]:w-4">
                 {isActive ? (

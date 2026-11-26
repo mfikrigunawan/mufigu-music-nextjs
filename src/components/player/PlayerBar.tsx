@@ -13,6 +13,7 @@ import {
   ShuffleIcon,
   VolumeIcon,
 } from '@/components/ui/Icons';
+import type { Playlist } from '@/content/playlists';
 import { formatTime } from '@/lib/format';
 import { gsap, useGSAP } from '@/lib/gsap';
 import {
@@ -23,6 +24,7 @@ import {
   prev,
   seek,
   seekBy,
+  setLibrary,
   setVolume,
   toggle,
   toggleMute,
@@ -80,10 +82,21 @@ function Seek({ disabled }: { disabled: boolean }) {
   );
 }
 
-export function PlayerBar() {
+export function PlayerBar({
+  playlists,
+  texts,
+}: {
+  playlists: Playlist[];
+  texts: Record<'empty' | 'hint' | 'error', string | null | undefined>;
+}) {
   const s = usePlayerState();
   const c = currentOf(s);
   const idle = !c;
+
+  // Urutan penting: daftar lagu harus ada sebelum initPlayer memulihkan lagu terakhir.
+  useEffect(() => {
+    setLibrary(playlists);
+  }, [playlists]);
 
   useEffect(() => {
     initPlayer();
@@ -154,7 +167,7 @@ export function PlayerBar() {
               data-playing={s.playing}
             >
               <Cover
-                slug={c.playlist.slug}
+                color={c.playlist.color}
                 name={c.playlist.name}
                 className="h-full w-full rounded-[50%]"
               />
@@ -167,16 +180,16 @@ export function PlayerBar() {
           )}
           <div className="min-w-0" aria-live="polite">
             <p className="truncate text-[.95rem] leading-tight font-semibold">
-              {c ? c.track.title : 'Nothing playing'}
+              {c ? c.track.title : texts.empty}
             </p>
             <p className="truncate text-[.8rem] text-[#b5b5b5]">
               {s.error
-                ? "Couldn't play this track"
+                ? texts.error
                 : c
                   ? [c.track.artist, c.playlist.name]
                       .filter(Boolean)
                       .join(' · ')
-                  : 'Pick a playlist to start'}
+                  : texts.hint}
             </p>
           </div>
         </div>
