@@ -10,7 +10,7 @@ export const slugify = (s: string) =>
     .replace(/^-|-$/g, '');
 
 export function parseFilename(file: string) {
-  const parts = file.replace(/\.mp3$/i, '').split(/-{3,}/);
+  const parts = file.replace(/\.(mp3|mp4|m4a)$/i, '').split(/-{3,}/);
   const lead = parts[0].match(/^(Opening|Ending)-(\d+)$/i);
   if (lead && parts.length >= 3) {
     return {

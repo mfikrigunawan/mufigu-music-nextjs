@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { parseBuffer } from 'music-metadata';
+import { parseBuffer, parseFile } from 'music-metadata';
 import { ValidationError, type CollectionConfig } from 'payload';
 import { parseFilename, slugify } from './filename';
 
@@ -48,19 +48,30 @@ export const Tracks: CollectionConfig = {
           parseFilename(req.file.name);
         for (const key of ['title', 'artist', 'label'] as const)
           data[key] = data[key] || originalDoc?.[key] || parsed[key];
-        const meta = await parseBuffer(req.file.data, 'audio/mpeg', {
-          duration: true,
-        }).catch(() => null);
-        if (
-          !/.mp3$/i.test(req.file.name) ||
-          meta?.format.container !== 'MPEG' ||
-          !meta.format.duration
-        )
+        const { tempFilePath, data: buffer, name } = req.file;
+        const meta = await (
+          tempFilePath
+            ? parseFile(tempFilePath, { duration: true })
+            : parseBuffer(buffer, undefined, { duration: true })
+        ) // Local API (seed)
+          .catch(() => null);
+        const { container = '', codec = '', duration } = meta?.format ?? {};
+        const mp3 = /\.mp3$/i.test(name) && container === 'MPEG';
+        const mp4 =
+          /\.(mp4|m4a)$/i.test(name) &&
+          /isom|iso\d|mp4|M4A/i.test(container) &&
+          /AAC/.test(codec);
+        if (!(mp3 || mp4) || !duration)
           throw new ValidationError({
-            errors: [{ path: 'file', message: 'File harus MP3 yang valid.' }],
+            errors: [
+              {
+                path: 'file',
+                message: 'File harus MP3, atau MP4/M4A dengan audio AAC.',
+              },
+            ],
           });
-        data.mimeType = 'audio/mpeg';
-        data.duration = Math.round(meta.format.duration);
+        data.mimeType = mp3 ? 'audio/mpeg' : 'audio/mp4';
+        data.duration = Math.round(duration);
         return data;
       },
     ],

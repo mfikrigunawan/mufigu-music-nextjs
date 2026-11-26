@@ -1,4 +1,4 @@
-// Menyajikan MP3 dari MUSIC_DIR dengan dukungan HTTP Range (wajib agar seek dan Media Session berjalan).
+// Menyajikan file musik dari MUSIC_DIR dengan dukungan HTTP Range (wajib agar seek dan Media Session berjalan).
 // Hanya file yang tercatat di CMS yang bisa diminta, jadi path traversal tidak mungkin.
 import { createReadStream } from 'node:fs';
 import { stat } from 'node:fs/promises';
@@ -88,7 +88,7 @@ async function serve(req: Request, { params }: Ctx, head: boolean) {
 
   const size = info.size;
   const base = {
-    'Content-Type': 'audio/mpeg',
+    'Content-Type': docs[0].mimeType || 'audio/mpeg',
     'Accept-Ranges': 'bytes',
     'Cache-Control': 'public, max-age=86400',
     'Last-Modified': info.mtime.toUTCString(),

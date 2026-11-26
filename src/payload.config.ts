@@ -1,3 +1,4 @@
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { postgresAdapter } from '@payloadcms/db-postgres';
@@ -45,6 +46,14 @@ export default buildConfig({
   secret: process.env.PAYLOAD_SECRET || '',
   serverURL: process.env.SERVER_URL,
   graphQL: { disable: true },
+  // Maksimal 1 GB per file; ditulis ke disk sementara supaya tidak memenuhi memori server.
+  upload: {
+    limits: { fileSize: 1024 ** 3 },
+    requestSizeLimit: 1025 * 1024 ** 2, // file + isian form
+    responseOnLimit: 'Ukuran file maksimal 1 GB.',
+    useTempFiles: true,
+    tempFileDir: os.tmpdir(),
+  },
   telemetry: false,
   typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },
   db: postgresAdapter({
